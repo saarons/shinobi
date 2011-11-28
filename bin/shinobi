@@ -26,7 +26,7 @@ if File.exists?(options[:config])
   to_be_added = ninja.keys - saved.keys
   
   if options[:modify]
-    to_be_removed.each { |k| Shinobi.uninstall(k) } 
+    to_be_removed.each { |k| Shinobi.uninstall(k) }
     to_be_added.each { |k| Shinobi.install(k, ninja[k]) }
   end
 else
