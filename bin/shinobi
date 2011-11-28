@@ -5,7 +5,7 @@ require "yaml"
 require "shinobi"
 require "optparse"
 
-options = {:config => File.expand_path("../config/printers.yml", __FILE__), :modify => true}
+options = {:config => "config/printers.yml", :modify => true}
 OptionParser.new do |opts|
   opts.banner = "Usage: shinobi [options]"
 
