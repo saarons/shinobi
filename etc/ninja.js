@@ -1,9 +1,6 @@
-var page = new WebPage();
+var zombie = require("zombie");
 var url = "http://www.columbia.edu/acis/facilities/printers/locations.html";
 
-page.open(url, function (status) {
-    console.log(page.evaluate(function () {
-        return JSON.stringify(printers);
-    }));
-    phantom.exit();
+zombie.visit(url, function (err, browser, status) {
+  console.log(JSON.stringify(browser.evaluate("printers")));
 });
