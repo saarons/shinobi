@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+$:.unshift(File.expand_path("../../lib", __FILE__))
+
+require "yaml"
+require "shinobi"
+require "optparse"
+
+options = {:config => File.expand_path("../config/printers.yml", __FILE__), :modify => true}
+OptionParser.new do |opts|
+  opts.banner = "Usage: shinobi [options]"
+
+  opts.on("-c", "--config config_file", "Specify the configuration file") do |c|
+    options[:config] = c
+  end
+  
+  opts.on("--[no-]modify", "Allow the addition and deletion of printers") do |m|
+    options[:modify] = m
+  end
+end.parse!
+
+if File.exists?(options[:config])
+  
+else
+  parsed = Shinobi.parse
+  
+  File.open(options[:config], "w") do |file|
+    file.write(YAML.dump(parsed))
+  end
+  
+  parsed.keys.each { |k| Shinobi.install(k, parsed[k]) } if options[:modify]
+end
