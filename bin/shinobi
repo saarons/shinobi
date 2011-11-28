@@ -11,6 +11,7 @@ OptionParser.new do |opts|
 
   opts.on("-u", "--update config_file", "Update the configuration file from the one specified") do |u|
     options[:update] = u
+    options[:upgrade] = false
   end
   
   opts.on("--upgrade", "Upgrade the configuration file from NINJA") do |u|
