@@ -18,14 +18,18 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+ninja = Shinobi.parse
 if File.exists?(options[:config])
+  saved = YAML.load(File.read(options[:config]))
   
-else
-  parsed = Shinobi.parse
+  to_be_removed = saved.keys - ninja.keys
+  to_be_added = ninja.keys - saved.keys
   
-  File.open(options[:config], "w") do |file|
-    file.write(YAML.dump(parsed))
+  if options[:modify]
+    to_be_removed.each { |k| Shinobi.uninstall(k) } 
+    to_be_added.each { |k| Shinobi.install(k, ninja[k]) }
   end
-  
-  parsed.keys.each { |k| Shinobi.install(k, parsed[k]) } if options[:modify]
+else
+  File.open(options[:config], "w") { |file| file.write(YAML.dump(ninja)) }
+  ninja.keys.each { |k| Shinobi.install(k, ninja[k]) } if options[:modify]
 end

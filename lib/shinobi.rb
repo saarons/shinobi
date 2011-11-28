@@ -55,7 +55,11 @@ module Shinobi
   
   def self.install(slug, data)
     puts "Adding #{slug}"
-    select_driver(data[:driver])
     # `lpadmin -p #{slug} -E -v lpd://#{data[:host]}/public #{select_driver(data[:driver])} -L "#{data[:location]}"`
+  end
+  
+  def self.uninstall(slug)
+    puts "Deleting #{slug}"
+    # `lpadmin -x #{slug}`
   end
 end
