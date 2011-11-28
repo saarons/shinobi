@@ -4,7 +4,7 @@ require "shinobi/version"
 module Shinobi
   NINJA = File.expand_path("../../etc/ninja.js", __FILE__)
   
-  def self.parse
+  def self.fetch
     MultiJson.decode(`node #{NINJA}`).inject({}) do |memo, obj|
       memo.merge(obj[0] => {:host => obj[1], :driver => obj[2], :location => obj[3], :double_sided => obj[4] == "Yes"})
     end
