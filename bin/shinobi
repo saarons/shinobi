@@ -24,11 +24,12 @@ if options[:update]
   fetch = Shinobi.fetch
   File.open(options[:config_file], "w") { |file| file.write(YAML.dump(fetch)) }
 else
-  config = YAML.load(File.read(options[:config_file])).keys.map(&:to_s)
+  config = YAML.load(File.read(options[:config_file]))
+  stored = config.keys.map(&:to_s)
   saved = Cups.show_destinations
   
-  to_be_removed = saved - config
-  to_be_added = config - saved
+  to_be_removed = saved - stored
+  to_be_added = stored - saved
   
   to_be_removed.each { |k| Shinobi.uninstall(k) }
   to_be_added.each { |k| Shinobi.install(k, config[k]) }
