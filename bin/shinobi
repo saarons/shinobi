@@ -5,43 +5,30 @@ require "yaml"
 require "shinobi"
 require "optparse"
 
-options = {:upgrade => true}
-OptionParser.new do |opts|
-  opts.banner = "Usage: shinobi [options] config"
+options = {:config_file => "config/printers.yml", :update => false}
 
-  opts.on("-u", "--update config_file", "Update the configuration file from the one specified") do |u|
-    options[:update] = u
-    options[:upgrade] = false
+OptionParser.new do |opts|
+  opts.banner = "Usage: shinobi <options>"
+  
+  opts.on("-c", "--config config_file", "Points to the configuration file") do |c|
+    options[:config_file] = c
   end
   
-  opts.on("--upgrade", "Upgrade the configuration file from NINJA") do |u|
-    options[:upgrade] = u
-  end
-  
-  opts.on("--create", "Create and install the configuration file from NINJA") do |u|
-    options[:create] = u
+  opts.on("-u", "--update", "Update the configuration file") do |c|
+    options[:update] = true
   end
 end.parse!
 
-
-config = ARGV[0]
-
-if options[:upgrade] || options[:create]
+if options[:update]
   fetch = Shinobi.fetch
-  File.open(config, "w") { |file| file.write(YAML.dump(fetch)) }
+  File.open(options[:config_file], "w") { |file| file.write(YAML.dump(fetch)) }
+else
+  config = YAML.load(File.read(options[:config_file])).keys.map(&:to_s)
+  saved = Cups.show_destinations
   
-  if options[:create]
-    fetch.keys.each { |k| Shinobi.install(k, fetch[k]) }
-  end
-elsif options[:update]
-  nascent = YAML.load(File.read(options[:update]))
-  saved = YAML.load(File.read(config))
-  
-  to_be_removed = saved.keys - nascent.keys
-  to_be_added = nascent.keys - saved.keys
+  to_be_removed = saved - config
+  to_be_added = config - saved
   
   to_be_removed.each { |k| Shinobi.uninstall(k) }
-  to_be_added.each { |k| Shinobi.install(k, nascent[k]) }
-  
-  File.open(config, "w") { |file| file.write(YAML.dump(nascent)) }
+  to_be_added.each { |k| Shinobi.install(k, config[k]) }
 end
