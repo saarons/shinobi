@@ -9,7 +9,7 @@ module Shinobi
   def self.fetch
     base_list = MultiJson.decode(`node #{NINJA}`)
     approved_list = MultiJson.decode(`node #{NINJA_STATUS}`)
-    base_list.select { |l| approved_list.include?(l[1]) && !SPECIAL.include?(l[3]) }.inject({}) do |memo, obj|
+    base_list.select { |l| approved_list.include?(l[1]) || SPECIAL.include?(l[3]) }.inject({}) do |memo, obj|
       memo.merge(obj[0] => {:host => obj[1], :driver => obj[2], :location => obj[3], :double_sided => obj[4] == "Yes"})
     end
   end
