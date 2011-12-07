@@ -3,9 +3,12 @@ require "shinobi/version"
 
 module Shinobi
   NINJA = File.expand_path("../../etc/ninja.js", __FILE__)
+  NINJA_STATUS = File.expand_path("../../etc/ninja_status.js", __FILE__)
   
   def self.fetch
-    MultiJson.decode(`node #{NINJA}`).inject({}) do |memo, obj|
+    base_list = MultiJson.decode(`node #{NINJA}`)
+    approved_list = MultiJson.decode(`node #{NINJA_STATUS}`)
+    base_list.select { |l| approved_list.include?(l[1]) }.inject({}) do |memo, obj|
       memo.merge(obj[0] => {:host => obj[1], :driver => obj[2], :location => obj[3], :double_sided => obj[4] == "Yes"})
     end
   end
