@@ -51,6 +51,8 @@ module Shinobi
       "-m hplip:0/ppd/hplip/HP/hp-laserjet_4250-ps.ppd"
     when "HP LaserJet 9000 Series PS"
       "-m hplip:0/ppd/hplip/HP/hp-laserjet_9000_series-ps.ppd"
+    when "HP LaserJet P4515"
+      "-m drv:///hpijs.drv/hp-laserjet_p4515-hpijs.ppd"
     else
       raise "Could not find driver for: #{driver_name}"
     end
